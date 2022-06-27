@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'django-insecure-3xrf+*(gtgns#-hb+^cg^y#nfdr4q7k4l^empeylk#=_7wedwr
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
 
@@ -75,7 +73,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'moika_server.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -85,7 +82,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -105,7 +101,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -117,20 +112,16 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 import os
 
-
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'blukky021000@gmail.com' # откуда
-EMAIL_HOST_PASSWORD = '123A098abc' # пароль
-SUPPORT_EMAIL = 'ya.gud@mail.ru' # куда
-EMAIL_USE_TLS = False
+EMAIL_HOST_USER = 'ya.gud@mail.ru'  # откуда
+EMAIL_HOST_PASSWORD = 'Byg5s0Y0Xx4ivwjH2epU'  # пароль
+SUPPORT_EMAIL = 'ya.gud@mail.ru'  # куда
 EMAIL_USE_SSL = True
-
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
@@ -151,5 +142,4 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': "%d.%m.%Y %H:%M",
 }
 
-
-AUTH_USER_MODEL='moika.CustomUser'
+AUTH_USER_MODEL = 'moika.CustomUser'
