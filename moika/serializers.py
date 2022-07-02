@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
 from .models import *
 
 
@@ -13,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     location = LocationSerializer(many=False, read_only=True)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ("username", "first_name", "email", "location")
 
 

@@ -92,8 +92,8 @@ class getCustomUser(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user_ser = CustomUserSerializer(request.user)
-        return Response(status=200, data=user_ser.data)
+        user_ser = UserSerializer(request.user).data
+        return Response(status=200, data=user_ser)
 
 
 class getCars(APIView):
