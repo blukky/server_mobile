@@ -12,6 +12,7 @@ from .serializers import *
 from datetime import datetime
 from django.core.mail import EmailMessage, send_mail
 import random
+import requests as r
 
 
 # Create your views here.
@@ -55,7 +56,8 @@ class verifyCode(APIView):
             token = Token.objects.get(user=CustomUser.objects.get(username=request.data.get("number")))
             user = CustomUser.objects.get(username=request.data.get("number"))
             first_join = user.first_join
-            return Response(status=200, data={"status": True, "token": token.key, "first_join": first_join})
+            user_serializers = UserSerializer(user).data
+            return Response(status=200, data={"status": True, "token": token.key, "first_join": first_join, "user": user_serializers})
 
 
 class userInfo(APIView):
@@ -134,3 +136,35 @@ class createOrder(APIView):
     def post(self, request):
         Order.objects.create(user=request.user, order_id=int(request.data.get("id")))
         return Response(status=200, data={"id": request.data.get("id")})
+
+
+class SetPushToken(APIView):
+
+    def post(self, request):
+        # if request.user:
+        # push_token, _ = PushToken.objects.get_or_create(user=request.user)
+        # push_token.push_token = request.data.get("push_token")
+        # push_token.save()
+        # else:
+        if not PushToken.objects.filter(push_token=request.data.get("push_token")):
+            PushToken.objects.create(push_token=request.data.get("push_token"))
+        return Response(status=200, data={"push_token": request.data.get("push_token")})
+
+    def delete(self, request):
+        push_token = PushToken.objects.filter(push_token=request.data.get("push_token"))
+        if push_token:
+            push_token.delete()
+        return Response(status=200, data={"detail": True})
+
+class GetPushToken(APIView):
+
+    def get(self, request):
+        if "phone" in request.GET:
+            push = PushToken.objects.filter(user__username=request.GET.get("phone")).first()
+            if push:
+                push_ser = PushTokenSerializers(push, many=False)
+                return Response(status=200, data=push_ser.data)
+            return Response(status=404, data={"detail": False})
+        else:
+            push_ser = PushTokenSerializers(PushToken.objects.all(), many=True)
+            return Response(status=200, data=push_ser.data)

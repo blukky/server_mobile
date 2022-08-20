@@ -12,5 +12,7 @@ urlpatterns = [
     path('delete_cars', deleteCars.as_view()),
     path("edit_car", editCar.as_view()),
     path("create_order", createOrder.as_view()),
+    path("set_push_token", SetPushToken.as_view()),
+    path("get_push_token", GetPushToken.as_view()),
 
 ]

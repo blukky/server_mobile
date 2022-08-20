@@ -21,3 +21,8 @@ class CarsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = ("id", 'body', "number")
+
+class PushTokenSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = PushToken
+        fields = ("push_token", )

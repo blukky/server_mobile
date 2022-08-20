@@ -14,6 +14,19 @@ class CustomUser(AbstractUser):
     first_join = models.BooleanField(default=True, verbose_name="Первый вход")
     username = models.CharField(max_length=255, verbose_name="Телефон", unique=True)
 
+
+class PushToken(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    push_token = models.CharField(max_length=255, verbose_name="Хеш для отправки уведомлений", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Токен уведомления"
+        verbose_name_plural = "Токены уведомлений"
+
+    def __str__(self):
+        return self.push_token
+
+
 class VerifyCode(models.Model):
     phone = models.CharField(max_length=16, verbose_name="Номер телефона")
     code = models.IntegerField(verbose_name="Код", null=True, blank=True)
