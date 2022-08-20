@@ -45,6 +45,7 @@ class apiLogin(APIView):
 
 
 class verifyCode(APIView):
+
     def post(self, request):
         ver_code = VerifyCode.objects.filter(phone=request.data.get("number")).first()
         if not ver_code:
@@ -57,7 +58,8 @@ class verifyCode(APIView):
             user = CustomUser.objects.get(username=request.data.get("number"))
             first_join = user.first_join
             user_serializers = UserSerializer(user).data
-            return Response(status=200, data={"status": True, "token": token.key, "first_join": first_join, "user": user_serializers})
+            return Response(status=200, data={"status": True, "token": token.key, "first_join": first_join,
+                                              "user": user_serializers})
 
 
 class userInfo(APIView):
@@ -155,6 +157,7 @@ class SetPushToken(APIView):
         if push_token:
             push_token.delete()
         return Response(status=200, data={"detail": True})
+
 
 class GetPushToken(APIView):
 
