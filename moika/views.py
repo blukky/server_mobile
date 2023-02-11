@@ -13,6 +13,12 @@ from datetime import datetime
 from django.core.mail import EmailMessage, send_mail
 import random
 import requests as r
+import uuid
+
+from yookassa import Configuration, Payment
+
+Configuration.account_id = "983868"
+Configuration.secret_key = "test_iyDB5Slxr13wGlLCUovF_tjZGCMdBj7-q1V41dpWZRs"
 
 
 # Create your views here.
@@ -138,6 +144,33 @@ class createOrder(APIView):
     def post(self, request):
         Order.objects.create(user=request.user, order_id=int(request.data.get("id")))
         return Response(status=200, data={"id": request.data.get("id")})
+
+
+class CreatePayment(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        count = Order.objects.count() + 1
+        payment = Payment.create({
+            "amount": {
+                "value": request.data.get("price"),
+                "currency": "RUB"
+            },
+            "confirmation": {
+                "type": "redirect",
+                "return_url": "ru.t4yc.moikamobile://payment?status=true"
+            },
+            "capture": True,
+            "description": f"Заказ №{count}"
+        }, uuid.uuid4())
+        return Response(status=200, data={"uri": payment.confirmation.confirmation_url})
+
+class CheckPayment(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        payment = Payment.find_one(request.data.get("uuid"))
+        return Response(status=200, data={"status": True if payment.status == "succeeded" else False})
 
 
 class SetPushToken(APIView):
