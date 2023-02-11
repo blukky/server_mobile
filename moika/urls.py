@@ -16,5 +16,7 @@ urlpatterns = [
     path("get_push_token", GetPushToken.as_view()),
     path("create_payment", CreatePayment.as_view()),
     path("check_payment", CheckPayment.as_view()),
+    path("accept_payment", AcceptPayment.as_view()),
+    path("cancel_payment", CancelPayment.as_view()),
 
 ]

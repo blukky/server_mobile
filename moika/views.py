@@ -160,17 +160,38 @@ class CreatePayment(APIView):
                 "type": "redirect",
                 "return_url": "ru.t4yc.moikamobile://payment?status=true"
             },
-            "capture": True,
+            "capture": False,
             "description": f"Заказ №{count}"
         }, uuid.uuid4())
         return Response(status=200, data={"uri": payment.confirmation.confirmation_url})
+
 
 class CheckPayment(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         payment = Payment.find_one(request.data.get("uuid"))
-        return Response(status=200, data={"status": True if payment.status == "succeeded" else False})
+        return Response(status=200, data={"status": True if payment.status == "waiting_for_capture" else False})
+
+
+class AcceptPayment(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        Payment.capture(request.data.get("uuid"))
+        return Response(status=200, data={"status": True})
+
+
+class CancelPayment(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        idempotence_key = str(uuid.uuid4())
+        response = Payment.cancel(
+            request.data.get("uuid"),
+            idempotence_key
+        )
+        return Response(status=200, data={"status": True})
 
 
 class SetPushToken(APIView):
