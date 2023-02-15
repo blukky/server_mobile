@@ -25,4 +25,4 @@ class CarsSerializer(serializers.ModelSerializer):
 class PushTokenSerializers(serializers.ModelSerializer):
     class Meta:
         model = PushToken
-        fields = ("push_token", )
+        fields = ("push_token", "ios_android")

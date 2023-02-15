@@ -19,13 +19,15 @@ from yookassa import Configuration, Payment
 
 Configuration.account_id = "983868"
 # Configuration.secret_key = "live_mFWf0xMg0YNc-F4-GsaQ-N4Oc2FGV7G4-9qlZaIW2w4" # продакшн
-Configuration.secret_key = "test_iyDB5Slxr13wGlLCUovF_tjZGCMdBj7-q1V41dpWZRs" # для тестов
+Configuration.secret_key = "test_iyDB5Slxr13wGlLCUovF_tjZGCMdBj7-q1V41dpWZRs"  # для тестов
+
 
 def send_code(number):
     var_code, _ = VerifyCode.objects.get_or_create(phone=number)
     code = random.randint(999, 9999)
     var_code.code = 2222  # code
     var_code.save()
+
 
 def create_password():
     import string
@@ -192,19 +194,17 @@ class CancelPayment(APIView):
 
 
 class SetPushToken(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        # if request.user:
-        # push_token, _ = PushToken.objects.get_or_create(user=request.user)
-        # push_token.push_token = request.data.get("push_token")
-        # push_token.save()
-        # else:
-        if not PushToken.objects.filter(push_token=request.data.get("push_token")):
-            PushToken.objects.create(push_token=request.data.get("push_token"))
+        if not PushToken.objects.filter(push_token=request.data.get("push_token"), user=request.user,
+                                        ios_android=request.data.get("device")):
+            PushToken.objects.create(push_token=request.data.get("push_token"), user=request.user,
+                                     ios_android=request.data.get("device"))
         return Response(status=200, data={"push_token": request.data.get("push_token")})
 
     def delete(self, request):
-        push_token = PushToken.objects.filter(push_token=request.data.get("push_token"))
+        push_token = PushToken.objects.filter(push_token=request.data.get("push_token")).first()
         if push_token:
             push_token.delete()
         return Response(status=200, data={"detail": True})
@@ -214,9 +214,9 @@ class GetPushToken(APIView):
 
     def get(self, request):
         if "phone" in request.GET:
-            push = PushToken.objects.filter(user__username=request.GET.get("phone")).first()
+            push = PushToken.objects.filter(user__username=request.GET.get("phone"))
             if push:
-                push_ser = PushTokenSerializers(push, many=False)
+                push_ser = PushTokenSerializers(push, many=True)
                 return Response(status=200, data=push_ser.data)
             return Response(status=404, data={"detail": False})
         else:
