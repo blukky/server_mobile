@@ -18,17 +18,14 @@ import uuid
 from yookassa import Configuration, Payment
 
 Configuration.account_id = "983868"
-Configuration.secret_key = "test_iyDB5Slxr13wGlLCUovF_tjZGCMdBj7-q1V41dpWZRs"
-
-
-# Create your views here.
+# Configuration.secret_key = "live_mFWf0xMg0YNc-F4-GsaQ-N4Oc2FGV7G4-9qlZaIW2w4" # продакшн
+Configuration.secret_key = "test_iyDB5Slxr13wGlLCUovF_tjZGCMdBj7-q1V41dpWZRs" # для тестов
 
 def send_code(number):
     var_code, _ = VerifyCode.objects.get_or_create(phone=number)
     code = random.randint(999, 9999)
     var_code.code = 2222  # code
     var_code.save()
-
 
 def create_password():
     import string

@@ -24,7 +24,11 @@ SECRET_KEY = 'django-insecure-3xrf+*(gtgns#-hb+^cg^y#nfdr4q7k4l^empeylk#=_7wedwr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['*']
+CSRF_COOKIE_DOMAIN = ['.app.time4ycar.ru']
+CSRF_TRUSTED_ORIGINS = ['http://*.app.time4ycar.ru', 'https://*.app.time4ycar.ru']
+CSRF_USE_SESSIONS = True
+CSRF_COOKIE_HTTPONLY = True
 
 # Application definition
 
@@ -106,29 +110,31 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-RU'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
+
+USE_TZ = True
 
 USE_I18N = True
 
-USE_TZ = True
+USE_L10N = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 import os
 
-EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_HOST = 'smtp.mail.ru' # сервер почты
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'ya.gud@mail.ru'  # откуда
-EMAIL_HOST_PASSWORD = 'Byg5s0Y0Xx4ivwjH2epU'  # пароль
-SUPPORT_EMAIL = 'ya.gud@mail.ru'  # куда
+EMAIL_HOST_USER = 'example@mail.ru'  # откуда
+EMAIL_HOST_PASSWORD = 'Byg5s0Y0Xx4ivwjH2epU'  # пароль приложения
+SUPPORT_EMAIL = 'example@mail.ru'  # куда
 EMAIL_USE_SSL = True
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "templates/static"),
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "templates/static"),
+# ]
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'templates/media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'templates/media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
