@@ -17,7 +17,8 @@ import uuid
 
 from yookassa import Configuration, Payment
 
-Configuration.account_id = "983868"
+# Configuration.account_id = "935465" # продакшн
+Configuration.account_id = "983868"  # для тестов
 # Configuration.secret_key = "live_mFWf0xMg0YNc-F4-GsaQ-N4Oc2FGV7G4-9qlZaIW2w4" # продакшн
 Configuration.secret_key = "test_iyDB5Slxr13wGlLCUovF_tjZGCMdBj7-q1V41dpWZRs"  # для тестов
 
@@ -194,17 +195,25 @@ class CancelPayment(APIView):
 
 
 class SetPushToken(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        if not PushToken.objects.filter(push_token=request.data.get("push_token"), user=request.user,
-                                        ios_android=request.data.get("device")):
-            PushToken.objects.create(push_token=request.data.get("push_token"), user=request.user,
-                                     ios_android=request.data.get("device"))
+        push = PushToken.objects.filter(push_token=request.data.get("push_token")).first()
+        if not push:
+            if request.user:
+                PushToken.objects.create(push_token=request.data.get("push_token"), user=request.user,
+                                         ios_android=request.data.get("device"))
+            else:
+                PushToken.objects.create(push_token=request.data.get("push_token"),
+                                         ios_android=request.data.get("device"))
+        else:
+            if request.user:
+                push.user = request.user
+                push.save()
         return Response(status=200, data={"push_token": request.data.get("push_token")})
 
     def delete(self, request):
-        push_token = PushToken.objects.filter(push_token=request.data.get("push_token")).first()
+        push_token = PushToken.objects.filter(push_token=request.DELETE.get("push_token")).first()
         if push_token:
             push_token.delete()
         return Response(status=200, data={"detail": True})
