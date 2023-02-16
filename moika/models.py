@@ -18,7 +18,7 @@ class CustomUser(AbstractUser):
 
 class PushToken(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
-    push_token = models.CharField(max_length=255, verbose_name="Хеш для отправки уведомлений", null=True, blank=True)
+    push_token = models.CharField(max_length=255, verbose_name="Хеш для отправки уведомлений")
     ios_android = models.BooleanField(default=False, verbose_name="ios/android")
 
     class Meta:

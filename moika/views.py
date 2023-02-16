@@ -1,6 +1,8 @@
+import rest_framework.request
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -177,7 +179,7 @@ class CheckPayment(APIView):
 class AcceptPayment(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def post(self, request: Request):
         Payment.capture(request.data.get("uuid"))
         return Response(status=200, data={"status": True})
 
@@ -185,7 +187,7 @@ class AcceptPayment(APIView):
 class CancelPayment(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def post(self, request: Request):
         idempotence_key = str(uuid.uuid4())
         response = Payment.cancel(
             request.data.get("uuid"),
@@ -197,14 +199,14 @@ class CancelPayment(APIView):
 class SetPushToken(APIView):
     # permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        push = PushToken.objects.filter(push_token=request.data.get("push_token")).first()
+    def post(self, request: Request):
+        push = PushToken.objects.filter(push_token=request.data.get("token")).first()
         if not push:
             if request.user:
-                PushToken.objects.create(push_token=request.data.get("push_token"), user=request.user,
+                PushToken.objects.create(push_token=request.data.get("token"), user=request.user,
                                          ios_android=request.data.get("device"))
             else:
-                PushToken.objects.create(push_token=request.data.get("push_token"),
+                PushToken.objects.create(push_token=request.data.get("token"),
                                          ios_android=request.data.get("device"))
         else:
             if request.user:
@@ -212,8 +214,8 @@ class SetPushToken(APIView):
                 push.save()
         return Response(status=200, data={"push_token": request.data.get("push_token")})
 
-    def delete(self, request):
-        push_token = PushToken.objects.filter(push_token=request.DELETE.get("push_token")).first()
+    def delete(self, request: Request):
+        push_token = PushToken.objects.filter(push_token=request.query_params.get("push_token")).first()
         if push_token:
             push_token.delete()
         return Response(status=200, data={"detail": True})
@@ -221,7 +223,7 @@ class SetPushToken(APIView):
 
 class GetPushToken(APIView):
 
-    def get(self, request):
+    def get(self, request: Request):
         if "phone" in request.GET:
             push = PushToken.objects.filter(user__username=request.GET.get("phone"))
             if push:
