@@ -16,13 +16,13 @@ from django.core.mail import EmailMessage, send_mail
 import random
 import requests as r
 import uuid
-
 from yookassa import Configuration, Payment
+import environ
 
-# Configuration.account_id = "935465" # продакшн
-Configuration.account_id = "983868"  # для тестов
-# Configuration.secret_key = "live_mFWf0xMg0YNc-F4-GsaQ-N4Oc2FGV7G4-9qlZaIW2w4" # продакшн
-Configuration.secret_key = "test_iyDB5Slxr13wGlLCUovF_tjZGCMdBj7-q1V41dpWZRs"  # для тестов
+env = environ.Env()
+
+Configuration.account_id = env('ACCOUNT_ID')
+Configuration.secret_key = env('SECRET_KEY')
 
 
 def send_code(number):
@@ -160,7 +160,7 @@ class CreatePayment(APIView):
             },
             "confirmation": {
                 "type": "redirect",
-                "return_url": "ru.t4yc.moikamobile://payment?status=true"
+                "return_url": f"{env('TOPIC')}://payment?status=true"
             },
             "capture": False,
             "description": f"Заказ №{count}"

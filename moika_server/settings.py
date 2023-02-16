@@ -11,9 +11,14 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+import environ
+
+env = environ.Env(DEBUG=(bool, False))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -22,11 +27,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-3xrf+*(gtgns#-hb+^cg^y#nfdr4q7k4l^empeylk#=_7wedwr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['*']
-CSRF_COOKIE_DOMAIN = ['.app.time4ycar.ru']
-CSRF_TRUSTED_ORIGINS = ['http://*.app.time4ycar.ru', 'https://*.app.time4ycar.ru']
+ALLOWED_HOSTS = env('ALLOWED_HOSTS').split(' ')
+CSRF_COOKIE_DOMAIN = env('CSRF_COOKIE_DOMAIN').split(' ')
+CSRF_TRUSTED_ORIGINS = env('CSRF_TRUSTED_ORIGINS').split(' ')
 CSRF_USE_SESSIONS = True
 CSRF_COOKIE_HTTPONLY = True
 
@@ -80,10 +85,23 @@ WSGI_APPLICATION = 'moika_server.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+# Тестовая БД
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# Продакшн БД
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env('DBNAME'),
+        'USER': env('DBUSER'),
+        'PASSWORD': env('DBPASSWORD'),
+        'HOST': env('DBHOST'),
+        'PORT': '',
     }
 }
 
@@ -120,13 +138,13 @@ USE_L10N = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
-import os
 
-EMAIL_HOST = 'smtp.mail.ru' # сервер почты
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'example@mail.ru'  # откуда
-EMAIL_HOST_PASSWORD = 'Byg5s0Y0Xx4ivwjH2epU'  # пароль приложения
-SUPPORT_EMAIL = 'example@mail.ru'  # куда
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+SUPPORT_EMAIL = env('SUPPORT_EMAIL')
+EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
 STATIC_URL = '/static/'
