@@ -18,7 +18,9 @@ import requests as r
 import uuid
 from yookassa import Configuration, Payment
 import environ
+from iqsms_rest import Gate
 
+gate = Gate('z1682238630732', '453043')  # sms
 env = environ.Env()
 
 Configuration.account_id = env('ACCOUNT_ID')
@@ -28,8 +30,9 @@ Configuration.secret_key = env('SECRET_KEY')
 def send_code(number):
     var_code, _ = VerifyCode.objects.get_or_create(phone=number)
     code = random.randint(999, 9999)
-    var_code.code = 2222  # code
+    var_code.code = code
     var_code.save()
+    gate.send_message(number, f'Код авторизации T4YC: {code}', sender='T4YC')
 
 
 def create_password():
