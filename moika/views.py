@@ -1,20 +1,20 @@
-import rest_framework.request
-from django.shortcuts import render
+# import rest_framework.request
+# from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.parsers import FormParser, MultiPartParser
+# from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
-from django.contrib.auth import authenticate
-from rest_framework import status
-from .models import *
+# from rest_framework.authtoken.models import Token
+# from django.contrib.auth import authenticate
+# from django.contrib.auth import authenticate
+# from rest_framework import status
+# from .models import *
 from .serializers import *
-from datetime import datetime
+# from datetime import datetime
 from django.core.mail import EmailMessage, send_mail
 import random
-import requests as r
+# import requests as r
 import uuid
 from yookassa import Configuration, Payment
 import environ
@@ -32,8 +32,9 @@ def send_code(number):
     code = random.randint(999, 9999)
     var_code.code = code
     var_code.save()
-    gate.send_message(number, f'Код авторизации T4YC: {code}', sender='T4YC')
-
+    gate.send_message(number, f'Добро пожаловать в T4YС!\nКод авторизации: {code}', sender='T4YC')
+    if float(gate.balance().split(';')[1]) <= 200.0:
+        gate.send_message('+79260824036', f'T4YС\nБаланс СМС {gate.balance().split(";")[1]}', sender='T4YC')
 
 def create_password():
     import string
