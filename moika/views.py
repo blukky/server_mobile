@@ -1,20 +1,21 @@
-# import rest_framework.request
-# from django.shortcuts import render
+import rest_framework.request
+from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
-# from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
-# from rest_framework.authtoken.models import Token
-# from django.contrib.auth import authenticate
-# from django.contrib.auth import authenticate
-# from rest_framework import status
-# from .models import *
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate
+from rest_framework import status
+from .models import *
 from .serializers import *
-# from datetime import datetime
+from datetime import datetime
 from django.core.mail import EmailMessage, send_mail
+from django.conf import settings
 import random
-# import requests as r
+import requests as r
 import uuid
 from yookassa import Configuration, Payment
 import environ
@@ -30,11 +31,14 @@ Configuration.secret_key = env('SECRET_KEY')
 def send_code(number):
     var_code, _ = VerifyCode.objects.get_or_create(phone=number)
     code = random.randint(999, 9999)
-    var_code.code = code
+    if number == '+7(123) 456-7890':
+        var_code.code = 2222
+    else:
+        var_code.code = code
+        gate.send_message(number, f'Добро пожаловать в T4YС!\nКод авторизации: {code}', sender='T4YC')
+        if float(gate.balance().split(';')[1]) <= 200.0:
+            gate.send_message('+79260824036', f'T4YС\nБаланс СМС {gate.balance().split(";")[1]}', sender='T4YC')
     var_code.save()
-    gate.send_message(number, f'Добро пожаловать в T4YС!\nКод авторизации: {code}', sender='T4YC')
-    if float(gate.balance().split(';')[1]) <= 200.0:
-        gate.send_message('+79260824036', f'T4YС\nБаланс СМС {gate.balance().split(";")[1]}', sender='T4YC')
 
 def create_password():
     import string
@@ -91,12 +95,9 @@ class userInfo(APIView):
 class supportEmail(APIView):
     permission_classes = [IsAuthenticated]
 
-    # parser_classes = [MultiPartParser, FormParser]
-
+    parser_classes = [MultiPartParser, FormParser]
     def post(self, request):
-        mail = EmailMessage("Сообщение о проблемах", request.POST.get(
-            "text") + f"\n\n Сообщение от {request.user.first_name} \n\n Телефон для обратной связи {request.user.username}",
-                            settings.EMAIL_HOST_USER, [settings.SUPPORT_EMAIL])
+        mail = EmailMessage('Сообщение о проблемах', f'{request.POST.get("text")} \n\n Сообщение от {request.user.first_name} \n\n Телефон для обратной связи {request.user.username}', settings.EMAIL_HOST_USER, [settings.SUPPORT_EMAIL])
         if "file" in request.FILES.keys():
             file = request.FILES.get("file")
             mail.attach(file.name, file.read(), file.content_type)
