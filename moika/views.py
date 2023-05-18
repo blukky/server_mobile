@@ -135,6 +135,9 @@ class editCar(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        temp_car = Car.objects.filter(user=request.user, number=request.data.get("number"))
+        if temp_car:
+            return Response(status=400, data={"status": False, "detail": "Машина с данным номером уже существует"})
         if not request.data.get("id") is None:
             car = Car.objects.get(id=request.data.get("id"))
             car.number = request.data.get("number")
